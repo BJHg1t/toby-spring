@@ -1,22 +1,26 @@
 package com.example.spring.chapter1.dao;
 
 import com.example.spring.chapter1.domain.User;
+import lombok.Setter;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Setter
 public class UserDao {
+//    private ConnectionMaker connectionMaker;
+    private DataSource dataSource;
 
-    private ConnectionMaker connectionMaker;
-
-    public UserDao(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
-    }
+    // 의존관계 주입
+//    public UserDao(ConnectionMaker connectionMaker) {
+//        this.connectionMaker = connectionMaker;
+//    }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "insert into users(id, name, password) values(?,?,?)");
@@ -31,7 +35,7 @@ public class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "select * from users where id = ?");
